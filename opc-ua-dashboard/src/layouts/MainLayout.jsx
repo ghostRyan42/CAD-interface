@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
@@ -19,7 +19,11 @@ const MainLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const location = useLocation();
-  const alerts = useStore(state => state.getActiveAlerts());
+  const allAlerts = useStore(state => state.alerts);
+  const alerts = useMemo(() => 
+    allAlerts.filter(alert => alert.statut === 'active'),
+    [allAlerts]
+  );
 
   const menuItems = [
     { path: '/', icon: LayoutDashboard, label: 'Dashboard' },

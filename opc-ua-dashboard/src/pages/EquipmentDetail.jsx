@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Truck, Refrigerator, MapPin, Package, Clock, Activity } from 'lucide-react';
 import useStore from '../store/useStore';
@@ -10,12 +11,20 @@ const EquipmentDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const equipments = useStore((state) => state.equipments);
-  const getEquipmentAlerts = useStore((state) => state.getEquipmentAlerts);
-  const getLotByEquipment = useStore((state) => state.getLotByEquipment);
+  const allAlerts = useStore((state) => state.alerts);
+  const lots = useStore((state) => state.lots);
 
   const equipment = equipments.find((eq) => eq.id === parseInt(id));
-  const alerts = getEquipmentAlerts(parseInt(id));
-  const currentLot = getLotByEquipment(parseInt(id));
+  
+  const alerts = useMemo(() => 
+    allAlerts.filter(alert => alert.equipementId === parseInt(id)),
+    [allAlerts, id]
+  );
+  
+  const currentLot = useMemo(() => {
+    if (!equipment || !equipment.lotActuel) return null;
+    return lots.find(lot => lot.id === equipment.lotActuel);
+  }, [equipment, lots]);
   const maintenance = maintenanceHistory[parseInt(id)] || [];
 
   // Generate last 24h data

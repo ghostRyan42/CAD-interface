@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Package, Thermometer, Cpu, Bell } from 'lucide-react';
 import useStore from '../store/useStore';
 import StatCard from '../components/StatCard';
@@ -13,14 +13,22 @@ const Dashboard = () => {
   const lots = useStore((state) => state.lots);
   const alerts = useStore((state) => state.alerts);
   const events = useStore((state) => state.events);
-  const getActiveAlerts = useStore((state) => state.getActiveAlerts);
-  const getActiveEquipments = useStore((state) => state.getActiveEquipments);
-  const getCriticalAlerts = useStore((state) => state.getCriticalAlerts);
 
-  // Calculate KPIs
-  const activeEquipments = getActiveEquipments();
-  const activeAlerts = getActiveAlerts();
-  const criticalAlerts = getCriticalAlerts();
+  // Calculate KPIs with useMemo to prevent recalculation
+  const activeEquipments = useMemo(() => 
+    equipments.filter(eq => eq.statut === 'actif'),
+    [equipments]
+  );
+  
+  const activeAlerts = useMemo(() => 
+    alerts.filter(alert => alert.statut === 'active'),
+    [alerts]
+  );
+  
+  const criticalAlerts = useMemo(() => 
+    alerts.filter(alert => alert.statut === 'active' && alert.severite === 'critical'),
+    [alerts]
+  );
   const lotsInTransit = lots.filter(lot => lot.statut === 'transport').length;
 
   // Calculate average temperature

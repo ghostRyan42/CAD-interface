@@ -1,6 +1,7 @@
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Package, CheckCircle, Clock, TrendingUp, MapPin } from 'lucide-react';
 import useStore from '../store/useStore';
+import { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 const LotTracking = () => {
